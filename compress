@@ -1,0 +1,166 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<math.h>
+#include<string.h>
+char str[200];
+int decstr[20][10]={0};
+int tl[20]={3};
+double len,h;
+int cl;
+double p,f;
+double z;
+float blen=0;
+float ublen;
+
+void bin(int n,int l)
+{
+    unsigned i;
+    blen=blen+l;
+    
+    for (i = 1 << l-1; i > 0; i = i / 2)
+    	(n & i) ? printf("1"): printf("0");
+
+        
+}
+
+int asc(char c)
+{
+	int x=c;
+	return x;
+}
+
+void decify()
+{
+	int i=0,j=0,k=0;
+	int t0=0,t1=0,t2=0;
+	char cstr[20][10];
+	
+	for(i=0;i<20;i++)
+	{
+		t0=0;
+		t1=0;
+		t2=0;
+		for(j=0;j<10;j++)
+		{
+			cstr[i][j]=str[k];
+			if(islower(str[k])||str[k]=='.'||str[k]==' ')
+				t0++;
+			if(isupper(str[k])||isdigit(str[k]))
+				t1++;
+			if(!(isalnum(str[k])))
+			{
+				if(str[k]!=' ')
+				{
+					t2++;
+				}
+			}
+			k++;
+		}
+		if(t0==10)
+			tl[i]=0;
+		if(t1!=0&&(t0+t1)==10)
+			tl[i]=1;
+		if(t2!=0)
+			tl[i]=2;
+	}
+	for(i=0;i<20;i++)
+	{
+		for(j=0;j<10;j++)
+		{
+			if(tl[i]==0)
+			{
+				if(islower(cstr[i][j]))
+				{
+					decstr[i][j]=asc(cstr[i][j])-96;
+				}
+				if(cstr[i][j]==' ')
+				{
+					decstr[i][j]=27;
+				}
+			}
+			if(tl[i]==1)
+			{
+				if(islower(cstr[i][j]))
+				{
+					decstr[i][j]=asc(cstr[i][j])-96;
+				}
+				if(cstr[i][j]==' ')
+				{
+					decstr[i][j]=27;
+				}
+				if(isupper(cstr[i][j]))
+				{
+					decstr[i][j]=asc(cstr[i][j])-37;
+				}
+				if(isdigit(cstr[i][j]))
+				{
+					decstr[i][j]=asc(cstr[i][j])+6;
+				}
+			}
+			if(tl[i]==2)
+			{
+				decstr[i][j]=asc(cstr[i][j]);
+			}
+			
+		}
+	}	
+}
+
+int main()
+{
+	int i,j;
+	printf("Enter the string to be compressed: ");
+	gets(str);
+	len=strlen(str);
+	decify();
+	printf("%lf\n",len);
+	h=(len/10);
+	cl=ceil(len/10);
+	f=modf(h,&p);
+	z=10*f;
+	for(i=0;i<cl;i++)
+	{
+		if(tl[i]==0)
+		{
+			bin(0,2);
+		}
+		if(tl[i]==1)
+		{
+			bin(1,2);
+		}
+		if(tl[i]==2)
+		{
+			bin(2,2);
+		}
+		printf("\n");
+		for(j=0;j<10;j++)
+		{
+			if(tl[i]==0)
+			{
+				bin(decstr[i][j],5);
+				printf("\n");
+			}
+			if(tl[i]==1)
+			{
+				bin(decstr[i][j],6);
+				printf("\n");
+			}
+			if(tl[i]==2)
+			{
+				bin(decstr[i][j],7);
+				printf("\n");
+			}	
+		}
+	}
+	
+	ublen=8*len;
+	z=10-z;
+	z=7*z;
+	blen=blen-z;
+	float cr;
+	cr=ublen/blen;
+	printf("\nUncompressed size= %f bits and compressed size= %f bits\n",ublen,blen);
+	printf("Compression ratio= %f",cr);
+	return 0;
+	
+}
